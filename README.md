@@ -24,7 +24,7 @@ PhishCatcher is a command-line tool designed to help cybersecurity professionals
 
 ### **Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/PhishCatcher.git
+git clone https://github.com/SarveshP16/PhishCatcher.git
 cd PhishCatcher
 ```
 
@@ -42,4 +42,5 @@ python3 phishcatcher.py email.eml
 
 ### **Command-Line Arguments**
 - `eml_file`: Path to the `.eml` file to be analyzed.
+- You can run `python3 phishcatcher.py -h` to view the help manual.
 - Example: `python3 phishcatcher.py sample_email.eml`
