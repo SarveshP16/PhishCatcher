@@ -2,3 +2,4 @@
 email
 hashlib
 argparse
+rich

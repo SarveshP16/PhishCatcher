@@ -2,6 +2,11 @@ import argparse
 from time import sleep
 import re
 import whois
+import os
+import email
+from email import policy
+from email.parser import BytesParser
+from rich import print
 
 def extract_artifacts(content):
     subject = None
@@ -11,6 +16,7 @@ def extract_artifacts(content):
     reply_to = None
     x_ip = None
     r_dns = None
+    f_match = None
 
     #print("Following artifacts are extracted!")
     print("  ")
@@ -68,9 +74,49 @@ def extract_artifacts(content):
         print(r_dns)
     else:
         print("X-Sender-IP NOT Found.")
+
+    #Extracting Filename
+    file_match = re.search(r'filename="([^"]*)"', content, re.IGNORECASE)
+    if file_match:
+        f_match = file_match.group(1)
+        print(f"\n Attachment Found: {f_match}")
+        file_analysis(content)
+        return f_match
+    else:
+        print("\n Attachment Not Found")
+        return None
     
 
-    save_to_file(subject, sender, rec, var_date, reply_to, x_ip, r_dns)
+    #save_to_file(subject, sender, rec, var_date, reply_to, x_ip, r_dns, f_match)
+
+"""This function is used to extract attachment from the email
+this uses python's email module"""
+def file_analysis(content):
+    """Extracts and saves the attachment from the email content."""
+    msg = email.message_from_string(content, policy=policy.default)
+    
+    for part in msg.iter_attachments():
+        filename = part.get_filename()
+        if filename:
+            with open(filename, 'wb') as f:
+                f.write(part.get_payload(decode=True))
+            print(f"Attachment saved as {filename}")
+        else:
+            print("No valid filename for attachment.")
+            
+    
+def delete_attachment(f_match):
+    user_input = input("Do You want to delete the attachment file (Y/N): ")
+    if user_input == 'Y':
+        if f_match and os.path.isfile(f_match):
+            print(f"File {f_match} exists. Deleting it...")
+            os.remove(f_match)
+            print(f"File {f_match} has been deleted.")
+        else:
+            print("No file found or file does not exist.")
+    else:
+        print(f"[bold red]DO NOT OPEN {f_match}, IT MAY CONTAIN MALWARE.[/bold red]")
+
 
 
 # Function to Create a report
@@ -94,18 +140,21 @@ def main():
     # Read the file content
     eml_content = args.eml_file.read()
     print("Successfully loaded the .eml file.")
-    
     sleep(2)
-
     print("Extracting Artifacts from the Email...")
-
     sleep(2)
 
     #Calling function to Extract Artifacts
+    f_match = extract_artifacts(eml_content)
 
-    extract_artifacts(eml_content)
+    #Deleting attachment file
+    if f_match:
+        delete_attachment(f_match)
+    else:
+        print("\n \n [yellow on blue]Thanks for using this tool...[/yellow on blue]")
     # Close the file
     args.eml_file.close()
+
 
 if __name__ == "__main__":
     main()
