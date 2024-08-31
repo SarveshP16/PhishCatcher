@@ -4,6 +4,13 @@ import re
 import whois
 
 def extract_artifacts(content):
+    subject = None
+    sender = None
+    rec = None
+    var_date = None
+    reply_to = None
+    x_ip = None
+    r_dns = None
 
     #print("Following artifacts are extracted!")
     print("  ")
@@ -44,9 +51,8 @@ def extract_artifacts(content):
     #Extracting Reply-To Email
     reply_match = re.search(r'^Reply-To: (.*)$', content, re.MULTILINE)
     if reply_match:
-        reply = reply_match.group(1)
-        print(f"Reply-To Email : {reply}")
-        
+        reply_to = reply_match.group(1)
+        print(f"Reply-To Email : {reply_to}")  
     else:
         print("Reply-To Email NOT Found.")
 
@@ -62,6 +68,20 @@ def extract_artifacts(content):
         print(r_dns)
     else:
         print("X-Sender-IP NOT Found.")
+    
+
+    save_to_file(subject, sender, rec, var_date, reply_to, x_ip, r_dns)
+
+
+# Function to Create a report
+def save_to_file(subject, sender, rec, var_date, reply_to, x_ip, r_dns):
+    print("Generating Report...")
+
+    f = open("report.txt", "w")
+    sub = ["Subject: \n", subject]
+    f.writelines(sub)
+    f.close()
+
     
 
 def main():
