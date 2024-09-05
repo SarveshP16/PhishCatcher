@@ -7,6 +7,7 @@ import email
 from email import policy
 from email.parser import BytesParser
 from rich import print
+import hashlib
 
 def extract_artifacts(content):
     subject = None
@@ -17,6 +18,7 @@ def extract_artifacts(content):
     x_ip = None
     r_dns = None
     f_match = None
+    filename = None
 
     #print("Following artifacts are extracted!")
     print("  ")
@@ -101,6 +103,7 @@ def file_analysis(content):
             with open(filename, 'wb') as f:
                 f.write(part.get_payload(decode=True))
             print(f"Attachment saved as {filename}")
+            return filename
         else:
             print("No valid filename for attachment.")
             
@@ -117,7 +120,17 @@ def delete_attachment(f_match):
     else:
         print(f"[bold red]DO NOT OPEN {f_match}, IT MAY CONTAIN MALWARE.[/bold red]")
 
+#Function to calculate file hash
+def calc_hash(filename):
+    algorithm='sha256'
+    hash_func = hashlib.new(algorithm)
 
+    with open(filename, 'rb') as file: #Open file in binary mode
+
+        while chunk := file.read(8192):
+            hash_func.update(chunk)
+    return hash_func.hexdigest() #Returns hexadecimal string
+    
 
 # Function to Create a report
 def save_to_file(subject, sender, rec, var_date, reply_to, x_ip, r_dns):
@@ -146,6 +159,16 @@ def main():
 
     #Calling function to Extract Artifacts
     f_match = extract_artifacts(eml_content)
+
+    #Calculate SHA256 Hash
+    if f_match:
+        try:
+            file_hash = calc_hash(f_match)
+            print(f"The SHA256 hash of the file is: {file_hash}")    
+        except FileNotFoundError:
+            print("File not found. Please enter a valid file path.")
+    else:
+        print(" ")
 
     #Deleting attachment file
     if f_match:
