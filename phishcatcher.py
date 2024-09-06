@@ -18,7 +18,8 @@ def extract_artifacts(content):
     x_ip = None
     r_dns = None
     f_match = None
-    filename = None
+    u_match = None
+    
 
     #print("Following artifacts are extracted!")
     print("  ")
@@ -76,6 +77,14 @@ def extract_artifacts(content):
         print(r_dns)
     else:
         print("X-Sender-IP NOT Found.")
+        
+    #Extracting URL
+    url_match = re.search(r'"(http[^"]*)"', content, re.IGNORECASE)
+    if url_match:
+        u_match = url_match.group(1)
+        print(f"URL Found: {u_match}")
+    else:
+        print("URL Not found")
 
     #Extracting Filename
     file_match = re.search(r'filename="([^"]*)"', content, re.IGNORECASE)
