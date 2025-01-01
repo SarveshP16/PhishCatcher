@@ -1,4 +1,4 @@
-
+python-whois
 email
 hashlib
 argparse
