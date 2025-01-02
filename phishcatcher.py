@@ -119,7 +119,7 @@ def file_analysis(content):
     
 def delete_attachment(f_match):
     user_input = input("Do You want to delete the attachment file (Y/N): ")
-    if user_input == 'Y':
+    if user_input == 'Y' or 'y':
         if f_match and os.path.isfile(f_match):
             print(f"File {f_match} exists. Deleting it...")
             os.remove(f_match)
