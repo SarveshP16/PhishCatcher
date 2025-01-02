@@ -2,4 +2,4 @@ python-whois
 email
 hashlib
 argparse
-rich
+rich 

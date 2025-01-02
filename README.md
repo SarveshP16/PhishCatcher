@@ -30,14 +30,14 @@ cd PhishCatcher
 
 ### **Install Dependencies**
 ```bash
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## **Usage**
 PhishCatcher is used directly from the command line. Here’s how you can get started:
 
 ```bash
-python3 phishcatcher.py email.eml
+python3 phishcatcher.py sampleemails/1.eml
 ```
 
 ### **Command-Line Arguments**
